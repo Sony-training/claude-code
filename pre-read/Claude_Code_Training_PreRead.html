@@ -1,0 +1,1330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pre-Read: GenAI, LLM Foundations, Prompt Engineering &amp; Claude Code</title>
+<style>
+  :root{
+    --bg:#fbfaf8;
+    --bg-alt:#f1efe9;
+    --fg:#272420;
+    --fg-muted:#5c574f;
+    --rule:#ddd7cb;
+    --card:#ffffff;
+    --accent:#9a5b2e;
+    --accent-2:#3c6e5c;
+    --accent-3:#5b5aa8;
+    --warn-bg:#fbf1dd;
+    --warn-rule:#d9b872;
+    --code-bg:#efece3;
+    --shadow: 0 1px 2px rgba(40,30,10,0.06), 0 6px 18px rgba(40,30,10,0.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1b1916;
+      --bg-alt:#242120;
+      --fg:#ece7de;
+      --fg-muted:#b4ac9d;
+      --rule:#3a3631;
+      --card:#221f1c;
+      --accent:#e0985c;
+      --accent-2:#7fc4ab;
+      --accent-3:#a6a4e8;
+      --warn-bg:#352c19;
+      --warn-rule:#8a6a2a;
+      --code-bg:#2a2622;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 18px rgba(0,0,0,0.3);
+    }
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height:1.65;
+    font-size:17px;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:0 24px 120px;}
+  header.hero{
+    padding:56px 24px 40px;
+    background:linear-gradient(180deg, var(--bg-alt), var(--bg));
+    border-bottom:1px solid var(--rule);
+    margin-bottom:8px;
+  }
+  header.hero .wrap{padding:0;}
+  .kicker{
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--accent);
+    margin:0 0 10px;
+  }
+  h1{font-size:2.1rem; line-height:1.2; margin:0 0 14px; letter-spacing:-0.01em;}
+  .subtitle{font-size:1.1rem; color:var(--fg-muted); margin:0 0 22px; max-width:640px;}
+  .meta-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:18px;}
+  .pill{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--card); border:1px solid var(--rule);
+    padding:6px 13px; border-radius:999px; font-size:13.5px; color:var(--fg-muted);
+    box-shadow:var(--shadow);
+  }
+  h2{
+    font-size:1.5rem; margin:56px 0 6px; padding-top:10px;
+    border-top:1px solid var(--rule);
+    letter-spacing:-0.01em;
+  }
+  h2 .num{color:var(--accent); font-variant-numeric:tabular-nums; margin-right:8px;}
+  h3{font-size:1.15rem; margin:30px 0 10px; color:var(--fg);}
+  h4{font-size:1rem; margin:22px 0 8px; color:var(--fg);}
+  p{margin:0 0 16px;}
+  ul,ol{margin:0 0 16px; padding-left:1.3em;}
+  li{margin-bottom:6px;}
+  strong{color:var(--fg);}
+  a{color:var(--accent-3);}
+  .lead{font-size:1.05rem; color:var(--fg-muted);}
+  nav.toc{
+    background:var(--card); border:1px solid var(--rule); border-radius:12px;
+    padding:20px 24px; margin:28px 0 8px; box-shadow:var(--shadow);
+  }
+  nav.toc h2{margin:0 0 10px; border:none; padding:0; font-size:1.05rem;}
+  nav.toc ol{column-count:2; column-gap:28px; padding-left:1.2em; font-size:15px;}
+  nav.toc li{margin-bottom:7px; break-inside:avoid;}
+  nav.toc a{text-decoration:none; color:var(--fg);}
+  nav.toc a:hover{color:var(--accent);}
+  .callout{
+    border-left:4px solid var(--accent); background:var(--card);
+    padding:14px 18px; border-radius:0 10px 10px 0; margin:18px 0;
+    box-shadow:var(--shadow); font-size:15.5px;
+  }
+  .callout.note{border-left-color:var(--accent-2);}
+  .callout.warn{border-left-color:var(--warn-rule); background:var(--warn-bg);}
+  .callout strong{display:block; margin-bottom:4px; font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--fg-muted);}
+  figure{margin:30px 0; padding:20px 18px 14px; background:var(--card); border:1px solid var(--rule); border-radius:12px; box-shadow:var(--shadow);}
+  figure svg{display:block; width:100%; height:auto; max-width:820px; margin:0 auto;}
+  figcaption{font-size:13.5px; color:var(--fg-muted); margin-top:12px; text-align:center; line-height:1.5;}
+  .svg-box text{fill:var(--fg);}
+  .box-fill{fill:var(--card); stroke:var(--rule); stroke-width:1.5;}
+  .box-accent{fill:color-mix(in srgb, var(--accent) 14%, var(--card)); stroke:var(--accent); stroke-width:1.5;}
+  .box-accent2{fill:color-mix(in srgb, var(--accent-2) 14%, var(--card)); stroke:var(--accent-2); stroke-width:1.5;}
+  .box-accent3{fill:color-mix(in srgb, var(--accent-3) 16%, var(--card)); stroke:var(--accent-3); stroke-width:1.5;}
+  .arrow-line{stroke:var(--fg-muted); stroke-width:1.6; fill:none;}
+  .arrow-head{fill:var(--fg-muted);}
+  .label-sm{font-size:11.5px; fill:var(--fg-muted);}
+  .label-title{font-size:13px; font-weight:600;}
+  .label-desc{font-size:10.5px; fill:var(--fg-muted);}
+  table{width:100%; border-collapse:collapse; margin:18px 0 26px; font-size:15px;}
+  th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--rule); vertical-align:top;}
+  th{color:var(--fg-muted); font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; font-weight:700;}
+  tr:last-child td{border-bottom:none;}
+  code, .code{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background:var(--code-bg); padding:2px 6px; border-radius:5px; font-size:0.88em;
+  }
+  details{
+    background:var(--card); border:1px solid var(--rule); border-radius:10px;
+    padding:12px 16px; margin:12px 0; box-shadow:var(--shadow);
+  }
+  details summary{cursor:pointer; font-weight:600;}
+  details[open] summary{margin-bottom:8px;}
+  details .answer{color:var(--fg-muted); font-size:15px;}
+  .quiz-q{font-size:15.5px;}
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:640px){
+    .grid-2{grid-template-columns:1fr;}
+    nav.toc ol{column-count:1;}
+    h1{font-size:1.6rem;}
+    body{font-size:16px;}
+  }
+  footer{
+    margin-top:70px; padding:28px 0 10px; border-top:1px solid var(--rule);
+    color:var(--fg-muted); font-size:13.5px; text-align:center;
+  }
+  .backtotop{display:inline-block; margin-top:60px; font-size:13.5px; color:var(--fg-muted); text-decoration:none;}
+  hr.soft{border:none; border-top:1px solid var(--rule); margin:40px 0;}
+
+  /* ---- paged layout ---- */
+  .label-title{fill:var(--fg);}
+  .page[hidden]{display:none;}
+  .bar{position:sticky; top:0; z-index:20; background:var(--bg); border-bottom:1px solid var(--rule);}
+  .bar .wrap{padding-top:0 !important; padding-bottom:0 !important;}
+  .bar .inner{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; font-size:14px;}
+  .bar a, .bar button{color:var(--fg-muted); text-decoration:none; font:inherit;}
+  .bar .home{background:none; border:none; padding:0; cursor:pointer;}
+  .bar .home:hover, .bar a:hover{color:var(--accent);}
+  .bar .where{color:var(--fg-muted); text-align:center; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .progress{height:3px; background:var(--rule);}
+  .progress span{display:block; height:100%; width:0; background:var(--accent); transition:width .25s;}
+  details.allparts{position:relative; background:transparent; border:none; box-shadow:none; padding:0; margin:0;}
+  .allparts summary{cursor:pointer; list-style:none; color:var(--fg-muted); border:1px solid var(--rule); background:var(--card); border-radius:999px; padding:5px 13px; font-size:13.5px;}
+  .allparts summary::-webkit-details-marker{display:none;}
+  .allparts[open] summary{color:var(--accent);}
+  .allparts ol{position:absolute; right:0; z-index:30; margin:8px 0 0; padding:12px 16px 12px 34px; width:min(360px,86vw); background:var(--card); border:1px solid var(--rule); border-radius:12px; box-shadow:var(--shadow); font-size:14.5px;}
+  .allparts li{margin-bottom:6px;}
+  .allparts a{color:var(--fg); text-decoration:none;}
+  .allparts a:hover{color:var(--accent);}
+  .allparts li.current a{color:var(--accent); font-weight:700;}
+  h1.part-title{font-size:1.9rem; line-height:1.25; margin:26px 0 14px; letter-spacing:-0.01em;}
+  h1.part-title .num{color:var(--accent); font-variant-numeric:tabular-nums; margin-right:10px;}
+  .pager{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:56px 0 8px;}
+  .pager a{display:block; padding:16px 18px; border:1px solid var(--rule); border-radius:12px; background:var(--card); box-shadow:var(--shadow); text-decoration:none; color:var(--fg);}
+  .pager a:hover{border-color:var(--accent);}
+  .pager .dir{display:block; font-size:12.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--fg-muted); margin-bottom:4px;}
+  .pager .prev{grid-column:1;}
+  .pager .next{grid-column:2; text-align:right;}
+  .pager .next.primary{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .pager .next.primary .dir{color:rgba(255,255,255,.8);}
+  @media (max-width:640px){ .pager{grid-template-columns:1fr;} .pager .next,.pager .prev{grid-column:1; text-align:left;} h1.part-title{font-size:1.55rem;} .bar .where{display:none;} }
+  .toc-list{list-style:none; padding:0; margin:0;}
+  .toc-list li{margin:0; border-bottom:1px solid var(--rule);}
+  .toc-list li:last-child{border-bottom:none;}
+  .toc-list a{display:grid; grid-template-columns:44px 1fr; gap:4px 8px; padding:14px 6px; text-decoration:none; color:var(--fg);}
+  .toc-list a:hover{background:var(--bg-alt);}
+  .toc-list .n{color:var(--accent); font-weight:700; font-variant-numeric:tabular-nums; font-size:1.15rem; grid-row:1 / span 2;}
+  .toc-list .t{font-weight:700;}
+  .toc-list .d{color:var(--fg-muted); font-size:14.5px;}
+  .tablewrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  .tablewrap table{min-width:560px;}
+  @media print{ .bar,.pager{display:none;} .page[hidden]{display:block !important;} .page{break-before:page;} header.hero + .wrap{break-before:auto;} }
+</style>
+</head>
+<body>
+<div class="bar" id="bar"><div class="wrap"><div class="inner"><a class="home" href="#p0">← Contents</a><span class="where" id="where">Contents</span><details class="allparts" id="allparts"><summary>All parts ▾</summary><ol><li data-i="1"><a href="#p1">From deterministic software to generative AI</a></li><li data-i="2"><a href="#p2">How a language model actually produces text</a></li><li data-i="3"><a href="#p3">How a model gets built, and why that matters to you</a></li><li data-i="4"><a href="#p4">From language model to agent</a></li><li data-i="5"><a href="#p5">Prompt engineering: getting the output you actually want</a></li><li data-i="6"><a href="#p6">The Claude model family &amp; choosing a model</a></li><li data-i="7"><a href="#p7">Claude Code at a glance</a></li><li data-i="8"><a href="#p8">Common questions &amp; misconceptions</a></li><li data-i="9"><a href="#p9">Quick reference: commands &amp; modes</a></li><li data-i="10"><a href="#p10">Glossary</a></li><li data-i="11"><a href="#p11">Self-check</a></li></ol></details></div></div><div class="progress"><span id="prog"></span></div></div>
+<section class="page" id="p0" data-title="Contents">
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">Pre-Read · Foundations Primer</p>
+    <h1>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview</h1>
+    <p class="subtitle">A foundations primer for engineers preparing to use Claude Code, written for people who already think in code, systems, and tools, not in machine-learning jargon.</p>
+    <div class="meta-row">
+      <span class="pill">⏱ ~45–55 min, scannable</span>
+      <span class="pill">📊 11 diagrams</span>
+      <span class="pill">✅ Includes a self-check</span>
+    </div>
+  </div>
+</header>
+<div class="wrap">
+<ul class="lead">
+<li>No ML background needed, but you do need the right mental model.</li>
+<li>Claude Code looks like a terminal tool. Underneath, it's different: <strong>probabilistic</strong>, not deterministic. Driven by a model, not a spec.</li>
+<li>This pre-read builds that model in layers: generative AI → how LLMs work → how a model becomes an <em>agent</em> → prompt engineering → the Claude models and a short tour of Claude Code.</li>
+<li>Goal: by the time hands-on work starts, you're writing strong prompts and reasoning about permission modes, context windows, and hooks, not meeting them cold.</li>
+</ul>
+
+<ul class="lead">
+<li>Read in order. Each page leans on the one before it: use the Next button, or the arrow keys, to move on.</li>
+<li>The prompt-engineering section is the skill you'll use in every exercise. The Claude Code section near the end is a deliberately short tour of its features: the training teaches each one in depth, so it's there to make the names familiar, not to be memorised.</li>
+</ul>
+
+<div class="callout note">
+  <strong>How to use this document</strong>
+  Read once, start to finish, ideally before your first hands-on session. Nothing to memorize: the glossary and quick reference are there to flip back to whenever you need them. A 13-question self-check closes it out.
+</div>
+
+<nav class="toc" aria-label="Contents"><h2>Contents</h2><ul class="toc-list"><li><a href="#p1"><span class="n">1</span><span class="t">From deterministic software to generative AI</span><span class="d">Where generative AI sits next to the software you already know, and the mental-model shift it asks for.</span></a></li><li><a href="#p2"><span class="n">2</span><span class="t">How a language model actually produces text</span><span class="d">Tokens, embeddings, next-token prediction, the context window and sampling: the mechanism behind everything else.</span></a></li><li><a href="#p3"><span class="n">3</span><span class="t">How a model gets built, and why that matters to you</span><span class="d">Pretraining, fine-tuning and feedback training in plain terms, and why they give you a knowledge cutoff and hallucination.</span></a></li><li><a href="#p4"><span class="n">4</span><span class="t">From language model to agent</span><span class="d">Tool use and the agent loop: how a language model becomes something that can read, run and check.</span></a></li><li><a href="#p5"><span class="n">5</span><span class="t">Prompt engineering: getting the output you actually want</span><span class="d">Nine techniques for getting the output you want, in the order you would apply them.</span></a></li><li><a href="#p6"><span class="n">6</span><span class="t">The Claude model family &amp; choosing a model</span><span class="d">Haiku, Sonnet, Opus and Fable, effort levels, and matching them to tasks.</span></a></li><li><a href="#p7"><span class="n">7</span><span class="t">Claude Code at a glance</span><span class="d">A one-line tour of each Claude Code feature, plus the five permission modes.</span></a></li><li><a href="#p8"><span class="n">8</span><span class="t">Common questions &amp; misconceptions</span><span class="d">Short answers to the questions engineers ask first.</span></a></li><li><a href="#p9"><span class="n">9</span><span class="t">Quick reference: commands &amp; modes</span><span class="d">Commands and modes mentioned in this pre-read.</span></a></li><li><a href="#p10"><span class="n">10</span><span class="t">Glossary</span><span class="d">Terms used in this pre-read, in one place.</span></a></li><li><a href="#p11"><span class="n">11</span><span class="t">Self-check</span><span class="d">Thirteen questions to check what stuck.</span></a></li></ul></nav>
+<nav class="pager"><a class="next primary" href="#p1"><span class="dir">Begin</span>1. From deterministic software to generative AI</a></nav>
+<footer>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview · Foundations primer</footer>
+</div>
+</section>
+<section class="page" id="p1" data-title="1. From deterministic software to generative AI">
+<div class="wrap">
+<h1 class="part-title"><span class="num">1</span>From deterministic software to generative AI</h1>
+<ul>
+<li>Your whole stack today (build tools, test suite, CI) is <strong>deterministic</strong>. Same input, same output, every time.</li>
+<li>Generative AI is not. It's a different species of system.</li>
+<li>Think of it like a well-read, fast colleague: usually right, sometimes confidently wrong, always worth a second look before anything ships.</li>
+</ul>
+
+<p>Where "generative AI" sits relative to things you already know:</p>
+
+<figure>
+  <svg viewBox="0 0 880 220" role="img" aria-label="A progression from rule-based systems, to machine learning, to generative AI, to agentic AI, each adding one new capability over the last.">
+    <g class="svg-box" font-family="inherit">
+      <!-- Box 1 -->
+      <rect x="10" y="35" width="160" height="90" rx="10" class="box-fill"/>
+      <text x="90" y="68" text-anchor="middle" class="label-title">Rule-based</text>
+      <text x="90" y="85" text-anchor="middle" class="label-title">software</text>
+      <text x="90" y="150" text-anchor="middle" class="label-sm">if/else, fixed logic</text>
+      <text x="90" y="164" text-anchor="middle" class="label-sm">you already live here</text>
+
+      <!-- Arrow 1 -->
+      <text x="205" y="58" text-anchor="middle" class="label-sm">+ learns</text>
+      <text x="205" y="71" text-anchor="middle" class="label-sm">patterns</text>
+      <line x1="172" y1="85" x2="232" y2="85" class="arrow-line"/>
+      <polygon points="240,85 230,80 230,90" class="arrow-head"/>
+
+      <!-- Box 2 -->
+      <rect x="240" y="35" width="160" height="90" rx="10" class="box-fill"/>
+      <text x="320" y="68" text-anchor="middle" class="label-title">Machine</text>
+      <text x="320" y="85" text-anchor="middle" class="label-title">learning</text>
+      <text x="320" y="150" text-anchor="middle" class="label-sm">predicts/classifies</text>
+      <text x="320" y="164" text-anchor="middle" class="label-sm">from data, not rules</text>
+
+      <!-- Arrow 2 -->
+      <text x="435" y="58" text-anchor="middle" class="label-sm">+ creates</text>
+      <text x="435" y="71" text-anchor="middle" class="label-sm">content</text>
+      <line x1="402" y1="85" x2="462" y2="85" class="arrow-line"/>
+      <polygon points="470,85 460,80 460,90" class="arrow-head"/>
+
+      <!-- Box 3 -->
+      <rect x="470" y="35" width="160" height="90" rx="10" class="box-accent"/>
+      <text x="550" y="68" text-anchor="middle" class="label-title">Generative AI</text>
+      <text x="550" y="85" text-anchor="middle" class="label-title">(LLMs)</text>
+      <text x="550" y="150" text-anchor="middle" class="label-sm">generates text/code</text>
+      <text x="550" y="164" text-anchor="middle" class="label-sm">one token at a time</text>
+
+      <!-- Arrow 3 -->
+      <text x="665" y="58" text-anchor="middle" class="label-sm">+ plans &amp;</text>
+      <text x="665" y="71" text-anchor="middle" class="label-sm">uses tools</text>
+      <line x1="632" y1="85" x2="692" y2="85" class="arrow-line"/>
+      <polygon points="700,85 690,80 690,90" class="arrow-head"/>
+
+      <!-- Box 4 -->
+      <rect x="700" y="35" width="170" height="90" rx="10" class="box-accent3"/>
+      <text x="785" y="68" text-anchor="middle" class="label-title">Agentic AI</text>
+      <text x="785" y="85" text-anchor="middle" class="label-title">(Claude Code)</text>
+      <text x="785" y="150" text-anchor="middle" class="label-sm">reads files, runs</text>
+      <text x="785" y="164" text-anchor="middle" class="label-sm">commands, verifies work</text>
+
+      <text x="440" y="200" text-anchor="middle" class="label-sm">Each stage keeps everything the previous stage could do, and adds one new capability.</text>
+    </g>
+  </svg>
+  <figcaption>Figure 1. Claude Code is the rightmost stage: a generative language model wrapped in a loop that lets it act on a real filesystem and shell, not just talk about one.</figcaption>
+</figure>
+
+<p>Three terms, used precisely from here on:</p>
+
+<ul>
+<li><strong>Artificial intelligence (AI):</strong> any system doing tasks that normally need human judgment. Says nothing about <em>how</em>.</li>
+<li><strong>Machine learning (ML):</strong> learns a function from examples instead of hand-written rules. A spam filter is ML: it classifies, it doesn't create.</li>
+<li><strong>Generative AI:</strong> ML that <em>creates</em> new content: text, code, images. A <strong>large language model (LLM)</strong> is the text/code version: the engine inside Claude, GPT, and every chat-style assistant.</li>
+</ul>
+
+<p>Claude Code = an LLM + an <strong>agent loop</strong>:</p>
+<ul>
+<li><strong>Eyes:</strong> reads your files</li>
+<li><strong>Hands:</strong> edits them, runs your build</li>
+<li><strong>Feedback:</strong> sees whether the tests passed</li>
+</ul>
+<p>The sections that follow build this up piece by piece, ending with a short tour of Claude Code itself.</p>
+
+<h3>Why now, not ten years ago</h3>
+<ul>
+<li>The core ideas (neural networks, the attention mechanism you'll meet shortly) are old, well before ChatGPT.</li>
+<li>What changed: <strong>scale</strong>, more training data, more compute, a better architecture (the "transformer").</li>
+<li>Scale a model up far enough and new abilities show up, sometimes surprisingly quickly: multi-step reasoning, long instruction-following, code in a rarely-seen language.</li>
+<li>So the pace feels new, but the ideas aren't. The scale needed to make them reliably useful is.</li>
+</ul>
+
+<h3>Generative AI beyond text</h3>
+<ul>
+<li>Same idea also builds image, audio, and video generators.</li>
+<li>Image model: predicts plausible pixels. LLM: predicts plausible tokens.</li>
+<li>Common thread: generate the next plausible piece, given everything so far.</li>
+<li>This training is about the text/code case only: the LLM.</li>
+</ul>
+
+<h3>The mental-model shift</h3>
+<ul>
+<li>Every tool you've used before this was built to be <strong>correct</strong>. Run it twice on the same input and it gives the same answer, or it's a bug.</li>
+<li>An LLM agent is built to be <strong>useful</strong> instead: a different target. Right most of the time. Confidently wrong sometimes.</li>
+<li>It gets dramatically better once it can check its own work: run the tests, read the real file instead of recalling it.</li>
+<li>That's why hands-on practice drills this loop: plan → implement → review the diff → test → verify.</li>
+<li>Not ceremony: it's the correct way to run a probabilistic tool inside a deterministic engineering process. The Claude Code tour near the end maps each step to a feature.</li>
+</ul>
+<nav class="pager" aria-label="Page navigation"><a class="prev" href="#p0"><span class="dir">← Back</span>Contents</a><a class="next primary" href="#p2"><span class="dir">Next →</span>2. How a language model actually produces text</a></nav>
+<footer>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview · Foundations primer</footer>
+</div>
+</section>
+<section class="page" id="p2" data-title="2. How a language model actually produces text">
+<div class="wrap">
+<h1 class="part-title"><span class="num">2</span>How a language model actually produces text</h1>
+<p>This section pays for itself directly in hands-on practice: model selection, token budgeting, context compaction, and why Claude Code sometimes "forgets" earlier conversation all come straight from the mechanism below.</p>
+
+<h3>Tokens, not words</h3>
+<ul>
+<li>A model doesn't read characters or whole words. Text is split into <strong>tokens</strong> first: a short word, a word fragment, or punctuation.</li>
+<li><code>training</code> → one token. <code>tokenization</code> → <code>token</code> + <code>ization</code>. <code>keygen_rotated</code> → three or four pieces.</li>
+<li>Rule of thumb: <strong>1 token ≈ 4 characters</strong>, so 100 tokens ≈ 75 words.</li>
+<li>Tokenizers differ by model. Anthropic's docs note that Claude 4.7 and later models produce roughly 30% more tokens for the same text than earlier ones, so treat the rule of thumb as approximate.</li>
+<li>Everything Claude Code measures (context size, <code>/usage</code>, cost) is counted in <strong>tokens</strong>, not lines or characters.</li>
+<li>A dense build log burns through budget much faster than the same number of lines of prose.</li>
+</ul>
+
+<figure>
+  <svg viewBox="0 0 470 170" role="img" aria-label="Common words tokenize as one piece; rare or compound identifiers split into several tokens.">
+    <g font-family="inherit">
+      <text x="10" y="38" class="label-sm">"training"</text>
+      <line x1="150" y1="34" x2="186" y2="34" class="arrow-line"/>
+      <polygon points="194,34 184,29 184,39" class="arrow-head"/>
+      <rect x="196" y="20" width="90" height="28" rx="6" class="box-accent2"/>
+      <text x="241" y="38" text-anchor="middle" class="label-sm">training</text>
+      <text x="300" y="38" class="label-desc">1 token</text>
+
+      <text x="10" y="88" class="label-sm">"tokenization"</text>
+      <line x1="150" y1="84" x2="186" y2="84" class="arrow-line"/>
+      <polygon points="194,84 184,79 184,89" class="arrow-head"/>
+      <rect x="196" y="70" width="68" height="28" rx="6" class="box-fill"/>
+      <text x="230" y="88" text-anchor="middle" class="label-sm">token</text>
+      <rect x="268" y="70" width="80" height="28" rx="6" class="box-fill"/>
+      <text x="308" y="88" text-anchor="middle" class="label-sm">ization</text>
+      <text x="360" y="88" class="label-desc">2 tokens</text>
+
+      <text x="10" y="138" class="label-sm">"keygen_rotated"</text>
+      <line x1="150" y1="134" x2="186" y2="134" class="arrow-line"/>
+      <polygon points="194,134 184,129 184,139" class="arrow-head"/>
+      <rect x="196" y="120" width="48" height="28" rx="6" class="box-accent"/>
+      <text x="220" y="138" text-anchor="middle" class="label-sm">key</text>
+      <rect x="248" y="120" width="44" height="28" rx="6" class="box-accent"/>
+      <text x="270" y="138" text-anchor="middle" class="label-sm">gen</text>
+      <rect x="296" y="120" width="26" height="28" rx="6" class="box-accent"/>
+      <text x="309" y="138" text-anchor="middle" class="label-sm">_</text>
+      <rect x="326" y="120" width="68" height="28" rx="6" class="box-accent"/>
+      <text x="360" y="138" text-anchor="middle" class="label-sm">rotated</text>
+      <text x="402" y="138" class="label-desc">4 tokens</text>
+    </g>
+  </svg>
+  <figcaption>Figure 2. Token count is not word count or line count. A rare, compound identifier can cost 4× what a common word costs.</figcaption>
+</figure>
+
+<h3>Embeddings: what a token "means" to the model</h3>
+<ul>
+<li>Internally, a token becomes an <strong>embedding</strong>: a list of numbers, a point in high-dimensional space.</li>
+<li>Tokens used in similar contexts land near each other. <code>bug</code> sits close to <code>error</code>, far from <code>banana</code>.</li>
+<li>Meaning and relatedness become <strong>distance and direction</strong> in that space: the same idea behind semantic code search.</li>
+<li>Net effect: the model isn't matching strings, it's reasoning over something closer to meaning. That's why a plain-English bug report can lead it to the right function even with none of the report's wording in your source.</li>
+</ul>
+
+<figure>
+  <svg viewBox="0 0 600 230" role="img" aria-label="Embedding space: tokens used in similar contexts land close together, like bug and error, while unrelated tokens like banana land far away.">
+    <g font-family="inherit">
+      <line x1="150" y1="155" x2="200" y2="110" class="arrow-line"/>
+      <text x="130" y="138" text-anchor="middle" class="label-sm">close in meaning</text>
+
+      <line x1="150" y1="155" x2="470" y2="55" class="arrow-line" stroke-dasharray="4 4"/>
+      <text x="330" y="90" text-anchor="middle" class="label-sm">far apart</text>
+
+      <circle cx="150" cy="155" r="6" class="box-accent"/>
+      <text x="162" y="160" class="label-title">bug</text>
+
+      <circle cx="200" cy="110" r="6" class="box-accent"/>
+      <text x="212" y="115" class="label-title">error</text>
+
+      <circle cx="110" cy="195" r="6" class="box-accent"/>
+      <text x="122" y="200" class="label-title">exception</text>
+
+      <circle cx="470" cy="55" r="6" class="box-accent3"/>
+      <text x="482" y="60" class="label-title">banana</text>
+
+      <circle cx="515" cy="95" r="6" class="box-accent3"/>
+      <text x="527" y="100" class="label-title">fruit</text>
+
+      <text x="300" y="216" text-anchor="middle" class="label-sm">Position = meaning. Nearby points are used in similar contexts.</text>
+    </g>
+  </svg>
+  <figcaption>Figure 3. A tiny slice of embedding space. <code>bug</code>/<code>error</code>/<code>exception</code> cluster together; <code>banana</code>/<code>fruit</code> cluster elsewhere, unrelated in meaning.</figcaption>
+</figure>
+
+<h3>From tokens to a single next guess</h3>
+<ul>
+<li>Your prompt, the conversation, and any file Claude Code has read all become one token sequence.</li>
+<li>The model's job: <strong>given the tokens so far, predict a probability distribution over the next token.</strong> That's it.</li>
+<li>No separate "understanding" step and "generation" step. Predicting the next token well, trillions of times during training, <em>is</em> what produces reasoning, code, and conversation.</li>
+</ul>
+
+<figure>
+  <svg viewBox="0 0 680 380" role="img" aria-label="Diagram of autoregressive generation: input tokens pass through the model to produce a probability distribution, a token is sampled, appended to the sequence, and the enlarged sequence loops back in as input for the next pass.">
+    <g font-family="inherit">
+      <!-- token strip -->
+      <text x="20" y="25" class="label-sm">Sequence so far</text>
+      <g transform="translate(20,35)">
+        <rect x="0" y="0" width="56" height="30" rx="6" class="box-fill"/><text x="28" y="20" text-anchor="middle" class="label-sm">The</text>
+        <rect x="62" y="0" width="56" height="30" rx="6" class="box-fill"/><text x="90" y="20" text-anchor="middle" class="label-sm">build</text>
+        <rect x="124" y="0" width="56" height="30" rx="6" class="box-fill"/><text x="152" y="20" text-anchor="middle" class="label-sm">fail</text>
+        <rect x="186" y="0" width="56" height="30" rx="6" class="box-fill"/><text x="214" y="20" text-anchor="middle" class="label-sm">ed</text>
+        <rect x="248" y="0" width="56" height="30" rx="6" class="box-fill"/><text x="276" y="20" text-anchor="middle" class="label-sm">because</text>
+      </g>
+
+      <line x1="172" y1="68" x2="172" y2="96" class="arrow-line"/>
+      <polygon points="172,104 166,92 178,92" class="arrow-head"/>
+
+      <rect x="72" y="106" width="200" height="56" rx="10" class="box-accent"/>
+      <text x="172" y="130" text-anchor="middle" class="label-title">Model</text>
+      <text x="172" y="147" text-anchor="middle" class="label-desc">(one forward pass)</text>
+
+      <line x1="172" y1="162" x2="172" y2="190" class="arrow-line"/>
+      <polygon points="172,198 166,186 178,186" class="arrow-head"/>
+
+      <text x="20" y="214" class="label-sm">Probability distribution over next token</text>
+      <g transform="translate(20,222)">
+        <rect x="0" y="0" width="110" height="28" rx="6" class="box-accent3"/><text x="55" y="19" text-anchor="middle" class="label-sm">"a": 41%</text>
+        <rect x="118" y="0" width="110" height="28" rx="6" class="box-fill"/><text x="173" y="19" text-anchor="middle" class="label-sm">"the": 23%</text>
+        <rect x="236" y="0" width="110" height="28" rx="6" class="box-fill"/><text x="291" y="19" text-anchor="middle" class="label-sm">"of": 9%</text>
+        <rect x="354" y="0" width="150" height="28" rx="6" class="box-fill"/><text x="429" y="19" text-anchor="middle" class="label-sm">…thousands more</text>
+      </g>
+
+      <!-- connector: sampled token down and across to the append box -->
+      <polyline points="75,250 75,272 450,272 450,298" class="arrow-line"/>
+      <polygon points="450,306 444,294 456,294" class="arrow-head"/>
+      <text x="260" y="266" text-anchor="middle" class="label-sm">sampled token: "a"</text>
+
+      <rect x="330" y="308" width="240" height="52" rx="10" class="box-accent2"/>
+      <text x="450" y="330" text-anchor="middle" class="label-title">Append "a" to the</text>
+      <text x="450" y="347" text-anchor="middle" class="label-title">sequence</text>
+
+      <!-- feedback loop: out and around the right/top margin, back into the token row -->
+      <polyline points="570,334 630,334 630,12 180,12 180,30" class="arrow-line"/>
+      <polygon points="180,38 174,26 186,26" class="arrow-head"/>
+      <text x="400" y="26" text-anchor="middle" class="label-sm" font-weight="700">repeat: fed back in as new input</text>
+    </g>
+  </svg>
+  <figcaption>Figure 4. Generation is <em>autoregressive</em>: one token is produced per pass, appended to the sequence, and fed back in. A 500-token reply is 500 of these passes. This is also why output streams in visibly, word by word, rather than appearing all at once.</figcaption>
+</figure>
+
+<h3>The context window: working memory, not long-term memory</h3>
+<ul>
+<li>Everything the model can "see" (instructions, conversation, files it has read) must fit in a fixed token budget: the <strong>context window</strong>.</li>
+<li>No separate database on the side. Not in the window = not available to that prediction. Full stop.</li>
+<li>A long session fills it up. Older content then has to be summarised or dropped to make room.</li>
+<li>That's exactly what <code>/compact</code>, <code>/clear</code>, and <code>/usage</code> manage.</li>
+</ul>
+
+<div class="callout">
+  <strong>Engineering analogy</strong>
+  The context window behaves like RAM, not disk. Fast and immediately usable, but limited in size and cleared when the session ends. Whatever the model acts on this step must already be loaded into it.
+</div>
+
+<h3>Worked example: where the budget actually goes</h3>
+<ul>
+<li>CI fails → a 400-line build log lands in context. ≈10–15 tokens/line → <strong>4,000–6,000 tokens</strong>, before a single real source line is read.</li>
+<li>+ the file it opens to investigate (~2,000 tokens)</li>
+<li>+ a couple of grepped related files (~2,000–4,000 tokens)</li>
+<li>+ the running conversation so far</li>
+<li>→ the window fills from <em>accumulation</em>, not one big paste.</li>
+<li><code>/compact</code> then shrinks "400 lines of warning noise" down to "build failed on X, root cause Y, fixed by Z." Budget freed, nothing important lost.</li>
+</ul>
+
+<h3>Sampling &amp; temperature: why output isn't identical every run</h3>
+<ul>
+<li>The model doesn't always pick the single highest-probability token: that would be repetitive and bland.</li>
+<li>Sampling adds controlled randomness (many APIs expose it as a <em>temperature</em> setting). Lower = predictable. Higher = more varied.</li>
+<li>Day to day you won't be tuning this: you just need to know the variability exists.</li>
+<li>Same prompt, run twice → two differently-worded (sometimes differently-structured) answers.</li>
+<li>Treat one run as <em>one sample</em> from a distribution of reasonable answers, not "the" answer.</li>
+<li>This is why reviewing diffs and requesting targeted refactors matter as habits: verification is built into the workflow because variability is built into the model.</li>
+</ul>
+
+<div class="callout note">
+  <strong>Not the same as learning</strong>
+  Run-to-run variability is sampling, not the model updating itself on your conversation. A deployed model's parameters are frozen. What looks like "it's adapting to me" is just more context piling up, gone the moment the session ends. Anything that should persist across sessions goes in <code>CLAUDE.md</code> (or Claude Code's auto memory) instead.
+</div>
+<nav class="pager" aria-label="Page navigation"><a class="prev" href="#p1"><span class="dir">← Previous</span>1. From deterministic software to generative AI</a><a class="next primary" href="#p3"><span class="dir">Next →</span>3. How a model gets built, and why that matters to you</a></nav>
+<footer>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview · Foundations primer</footer>
+</div>
+</section>
+<section class="page" id="p3" data-title="3. How a model gets built, and why that matters to you">
+<div class="wrap">
+<h1 class="part-title"><span class="num">3</span>How a model gets built, and why that matters to you</h1>
+<ul>
+<li>You will never train a model yourself to use Claude Code. This part is here for the <em>consequences</em> of how models are built.</li>
+<li>Two of them you'll hit in practice: a <strong>knowledge cutoff</strong> (the model doesn't know recent things) and <strong>hallucination</strong> (it states something confident and wrong instead of "I don't know").</li>
+<li>A third explains why a deployed model doesn't learn from your sessions: its <strong>weights are frozen</strong>.</li>
+<li>The story behind all three: the model is built in three stages by its maker, before you ever see it.</li>
+</ul>
+
+<figure>
+  <svg viewBox="0 0 860 220" role="img" aria-label="Training pipeline: pretraining on raw text, then fine-tuning on instruction examples, then reinforcement learning from human feedback, producing the deployed assistant model.">
+    <g font-family="inherit">
+      <rect x="10" y="50" width="190" height="90" rx="10" class="box-fill"/>
+      <text x="105" y="78" text-anchor="middle" class="label-title">Pretraining</text>
+      <text x="105" y="100" text-anchor="middle" class="label-sm">next-token prediction</text>
+      <text x="105" y="114" text-anchor="middle" class="label-sm">over a huge text &amp; code</text>
+      <text x="105" y="128" text-anchor="middle" class="label-sm">corpus</text>
+
+      <line x1="200" y1="95" x2="236" y2="95" class="arrow-line"/>
+      <polygon points="236,95 228,90 228,100" class="arrow-head"/>
+
+      <rect x="238" y="50" width="190" height="90" rx="10" class="box-fill"/>
+      <text x="333" y="78" text-anchor="middle" class="label-title">Fine-tuning</text>
+      <text x="333" y="100" text-anchor="middle" class="label-sm">trained on curated</text>
+      <text x="333" y="114" text-anchor="middle" class="label-sm">instruction / response</text>
+      <text x="333" y="128" text-anchor="middle" class="label-sm">examples</text>
+
+      <line x1="428" y1="95" x2="464" y2="95" class="arrow-line"/>
+      <polygon points="464,95 456,90 456,100" class="arrow-head"/>
+
+      <rect x="466" y="50" width="190" height="90" rx="10" class="box-fill"/>
+      <text x="561" y="78" text-anchor="middle" class="label-title">Alignment (RLHF)</text>
+      <text x="561" y="100" text-anchor="middle" class="label-sm">learns from human</text>
+      <text x="561" y="114" text-anchor="middle" class="label-sm">preference rankings of</text>
+      <text x="561" y="128" text-anchor="middle" class="label-sm">candidate answers</text>
+
+      <line x1="656" y1="95" x2="692" y2="95" class="arrow-line"/>
+      <polygon points="692,95 684,90 684,100" class="arrow-head"/>
+
+      <rect x="694" y="50" width="160" height="90" rx="10" class="box-accent"/>
+      <text x="774" y="85" text-anchor="middle" class="label-title">Deployed</text>
+      <text x="774" y="103" text-anchor="middle" class="label-title">model</text>
+      <text x="774" y="121" text-anchor="middle" class="label-sm">what you call</text>
+
+      <text x="430" y="180" text-anchor="middle" class="label-sm">The knowledge cutoff is set when pretraining data collection stops: nothing after that date was in the training corpus.</text>
+    </g>
+  </svg>
+  <figcaption>Figure 5. The three stages, all done by the model's maker before release. Pretraining builds raw capability, fine-tuning teaches it to behave like an assistant, and feedback training tunes which answers it prefers to give.</figcaption>
+</figure>
+
+<h3>The three stages in plain terms</h3>
+<p>An analogy: think of how a new engineer becomes useful on your team. Each training stage has a rough human counterpart:</p>
+
+<div class="tablewrap"><table>
+<tr><th>Stage</th><th>What actually happens</th><th>New-hire analogy</th><th>What you notice</th></tr>
+<tr><td><strong>1. Pretraining</strong></td><td>The model reads a huge amount of text and code. At each spot it guesses the next token and is scored on whether it was right. Repeated an enormous number of times.</td><td>Reading a whole library of books and codebases before day one</td><td>Fluent code, knowledge of common libraries, general know-how. Also the <strong>knowledge cutoff</strong>: it stops reading on a date.</td></tr>
+<tr><td><strong>2. Fine-tuning</strong></td><td>Further training on curated examples of "request → good response". The model learns to answer a request, not just keep writing the text it was given.</td><td>Onboarding: how to take a ticket, reply in the team's format, decline unsafe requests</td><td>It follows instructions and formats its answers, instead of just continuing your sentence.</td></tr>
+<tr><td><strong>3. Feedback training (RLHF)</strong></td><td>For the same request the model produces several answers; raters rank which is better (human raters, and in some methods AI models following written principles), and it's nudged toward the preferred ones. (RLHF = reinforcement learning from human feedback.)</td><td>Code-review feedback: "this answer is clearer and safer than that one"</td><td>Tone, caution, and when it asks a clarifying question versus just proceeding.</td></tr>
+</table></div>
+
+<div class="callout note">
+  <strong>"Fine-tuning" here is not something you do</strong>
+  You may have heard of companies "fine-tuning a model on their own data". That's a separate, optional thing. The fine-tuning in the table is a standard stage Anthropic completes before release. Using Claude Code needs no custom fine-tuning: your project knowledge reaches the model through its context window (<code>CLAUDE.md</code>, files it reads), not through retraining.
+</div>
+
+<ul>
+<li>Pretraining is where almost all the raw ability comes from. The two later stages shape <em>how</em> it uses that ability.</li>
+<li>No human labels the pretraining data: the "answer" at each step is simply the token that actually came next in the text.</li>
+<li>Details like model size or dataset contents don't matter for this training. What matters is that the stages happen once, offline, and finish before release.</li>
+</ul>
+
+<h3>What training produces: weights, not rules</h3>
+<ul>
+<li>All three stages adjust one thing: a huge, fixed set of numbers called <strong>weights</strong>.</li>
+<li>Together they define one function: "probability distribution over next token, given tokens so far".</li>
+<li>No rules engine. No lookup table of facts. No "if asked X, answer Y" database anywhere.</li>
+<li>At inference time (every request you send), the weights are read-only. Running the model doesn't change them.</li>
+<li>That's the precise sense in which a deployed model doesn't "learn" from you: weights were set once, at the end of training, and stay fixed across every session, every user, until a new version replaces them.</li>
+</ul>
+
+<figure>
+  <svg viewBox="0 0 620 230" role="img" aria-label="Training produces one frozen set of weights. Every session reads those same weights through its own temporary context, and none of them writes back to the weights.">
+    <g font-family="inherit">
+      <rect x="20" y="24" width="150" height="54" rx="10" class="box-fill"/>
+      <text x="95" y="46" text-anchor="middle" class="label-title">Training</text>
+      <text x="95" y="63" text-anchor="middle" class="label-sm">one-time, offline</text>
+
+      <line x1="170" y1="51" x2="206" y2="51" class="arrow-line"/>
+      <polygon points="214,51 204,46 204,56" class="arrow-head"/>
+
+      <rect x="216" y="16" width="190" height="70" rx="10" class="box-accent"/>
+      <text x="311" y="40" text-anchor="middle" class="label-title">Weights</text>
+      <text x="311" y="58" text-anchor="middle" class="label-sm">frozen, read-only</text>
+      <text x="311" y="72" text-anchor="middle" class="label-sm">same for every user</text>
+
+      <line x1="280" y1="86" x2="128" y2="147" class="arrow-line"/>
+      <polygon points="120,150 127,142 131,151" class="arrow-head"/>
+      <line x1="311" y1="86" x2="311" y2="141" class="arrow-line"/>
+      <polygon points="311,150 306,140 316,140" class="arrow-head"/>
+      <line x1="345" y1="86" x2="492" y2="147" class="arrow-line"/>
+      <polygon points="500,150 489,151 493,142" class="arrow-head"/>
+      <text x="311" y="110" text-anchor="middle" class="label-sm">read by every session: never written</text>
+
+      <rect x="40" y="154" width="160" height="54" rx="10" class="box-fill"/>
+      <text x="120" y="176" text-anchor="middle" class="label-title">Session A</text>
+      <text x="120" y="193" text-anchor="middle" class="label-sm">own temp. context</text>
+
+      <rect x="231" y="154" width="160" height="54" rx="10" class="box-fill"/>
+      <text x="311" y="176" text-anchor="middle" class="label-title">Session B</text>
+      <text x="311" y="193" text-anchor="middle" class="label-sm">own temp. context</text>
+
+      <rect x="420" y="154" width="160" height="54" rx="10" class="box-fill"/>
+      <text x="500" y="176" text-anchor="middle" class="label-title">Session C</text>
+      <text x="500" y="193" text-anchor="middle" class="label-sm">own temp. context</text>
+    </g>
+  </svg>
+  <figcaption>Figure 6. Every session (yours included) reads the same frozen weights through its own throwaway context window. Nothing a session does changes the weights for the next session.</figcaption>
+</figure>
+
+<h3>Knowledge cutoff and hallucination, explained</h3>
+<p>Two behaviours that look like arbitrary bugs, explained by how the model was built:</p>
+
+<div class="grid-2">
+  <div class="callout warn">
+    <strong>Knowledge cutoff</strong>
+    Factual knowledge is frozen at whenever pretraining stopped reading new data. No library release, CVE, or internal API change after that date, unless it's placed into context at runtime (tool use, MCP).
+  </div>
+  <div class="callout warn">
+    <strong>Hallucination</strong>
+    Not a lookup table: always producing the most plausible continuation. Usually correct, because predicting real text correctly is exactly what pretraining rewarded. Under pressure (an obscure API, a name that "sounds right"), fluency and correctness can come apart.
+  </div>
+</div>
+
+<h3>What hallucination looks like in practice</h3>
+<p>Rarely obviously wrong. Usually a detail that compiles or runs, or almost makes sense:</p>
+<ul>
+<li>A command-line flag or config option that sounds plausible but doesn't exist in the version you're actually running.</li>
+<li>A function or API signature recalled from a more common library or version than the one actually in your dependencies.</li>
+<li>"This function is only called from one place": true of a similar open-source project, not your fork.</li>
+<li>A confident complexity or performance claim that doesn't match the actual implementation in front of it.</li>
+</ul>
+<ul>
+<li>All four get far less likely once the model has actually <em>read</em> your file or run your build: the whole point of the agent loop.</li>
+<li>"Ground it in a tool call, don't trust recall" is a recurring theme across the hands-on exercises.</li>
+</ul>
+
+<div class="callout note">
+  <strong>Practical takeaway</strong>
+  Treat an unverified claim about an API, flag, or file path the way you'd treat one from a new teammate who hasn't read the codebase yet: plausible, usually right, worth a quick check before it goes into a commit.
+</div>
+<nav class="pager" aria-label="Page navigation"><a class="prev" href="#p2"><span class="dir">← Previous</span>2. How a language model actually produces text</a><a class="next primary" href="#p4"><span class="dir">Next →</span>4. From language model to agent</a></nav>
+<footer>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview · Foundations primer</footer>
+</div>
+</section>
+<section class="page" id="p4" data-title="4. From language model to agent">
+<div class="wrap">
+<h1 class="part-title"><span class="num">4</span>From language model to agent</h1>
+<ul>
+<li>So far: a system that takes text in, produces text out. A very capable autocomplete.</li>
+<li>That alone can't read your repo, run <code>make</code>, or open a pull request.</li>
+<li>Missing ingredient: <strong>tool use</strong>. The loop built around it turns a language model into an <strong>agent</strong>.</li>
+</ul>
+
+<h3>Tool use (function calling)</h3>
+<ul>
+<li>The model is given a list of "tools": named actions with a defined input, e.g. <em>read a file</em>, <em>run a shell command</em>, <em>search for a pattern</em>.</li>
+<li>Like handing a new hire a one-page list of commands they're allowed to run.</li>
+<li>When a tool would help, the model produces a structured <em>request</em> to call it, not just prose.</li>
+<li>Code <strong>outside</strong> the model executes the action and feeds the result back in as new input.</li>
+<li>The model never touches your filesystem directly. It only proposes; the agent harness carries it out.</li>
+</ul>
+
+<h3>The agent loop</h3>
+<p>Wrap one tool call in a loop (reason, act, observe, reason again) and you get the pattern under essentially every coding agent. Claude Code's own documentation describes the same loop as three blending phases: <em>gather context → take action → verify results</em>.</p>
+
+<figure>
+  <svg viewBox="0 0 700 420" role="img" aria-label="The agent loop: reason about the next step, act by calling a tool, observe the result, and repeat until the goal is satisfied, at which point a final response is returned.">
+    <g font-family="inherit">
+      <rect x="60" y="10" width="200" height="60" rx="10" class="box-fill"/>
+      <text x="160" y="35" text-anchor="middle" class="label-title">Goal / instruction</text>
+      <text x="160" y="53" text-anchor="middle" class="label-sm">e.g. "fix the failing test"</text>
+
+      <line x1="160" y1="70" x2="160" y2="104" class="arrow-line"/>
+      <polygon points="160,104 155,96 165,96" class="arrow-head"/>
+
+      <rect x="60" y="108" width="200" height="60" rx="10" class="box-accent3"/>
+      <text x="160" y="133" text-anchor="middle" class="label-title">Reason</text>
+      <text x="160" y="151" text-anchor="middle" class="label-sm">decide the next step</text>
+
+      <line x1="260" y1="138" x2="430" y2="138" class="arrow-line"/>
+      <polygon points="430,138 422,133 422,143" class="arrow-head"/>
+
+      <rect x="432" y="108" width="200" height="60" rx="10" class="box-accent"/>
+      <text x="532" y="133" text-anchor="middle" class="label-title">Act</text>
+      <text x="532" y="151" text-anchor="middle" class="label-sm">call a tool (Read/Bash/Edit…)</text>
+
+      <line x1="532" y1="168" x2="532" y2="222" class="arrow-line"/>
+      <polygon points="532,222 527,214 537,214" class="arrow-head"/>
+
+      <rect x="432" y="226" width="200" height="60" rx="10" class="box-accent2"/>
+      <text x="532" y="251" text-anchor="middle" class="label-title">Observe</text>
+      <text x="532" y="269" text-anchor="middle" class="label-sm">tool result returns to context</text>
+
+      <path d="M 432 256 C 300 256, 260 196, 260 168" class="arrow-line" fill="none"/>
+      <polygon points="258,168 252,176 264,174" class="arrow-head"/>
+      <text x="320" y="300" text-anchor="middle" class="label-sm">loop while more steps remain</text>
+
+      <path d="M 432 256 C 250 340, 200 340, 170 340" class="arrow-line" stroke-dasharray="4 4" fill="none"/>
+      <polygon points="170,340 178,335 178,345" class="arrow-head" transform="rotate(180 174 340)"/>
+
+      <rect x="60" y="346" width="200" height="60" rx="10" class="box-fill"/>
+      <text x="160" y="371" text-anchor="middle" class="label-title">Final response</text>
+      <text x="160" y="389" text-anchor="middle" class="label-sm">goal satisfied, loop exits</text>
+    </g>
+  </svg>
+  <figcaption>Figure 7. The agent loop. "Reason" and "Act" repeat (often many times per request) until the model decides the goal is met and produces a final answer instead of another tool call. Every intermediate "Observe" step is new, grounded information entering the context window, not something the model had to know in advance.</figcaption>
+</figure>
+
+<div class="callout">
+  <strong>The single most important mental model here</strong>
+  "Investigating a bug" isn't recalling your code from memory. It's running the loop: reason → act (grep for callers) → observe (read the matches) → reason again, until it has enough <em>current, grounded</em> information to propose a change. Good tools and relevant context matter more than a cleverer prompt: the loop is only as good as what it's allowed to look at and do.
+</div>
+
+<h3>A worked trace: "the integration test is failing"</h3>
+<p>You tell Claude Code: "<code>test_connection_timeout</code> is failing, figure out why." A realistic trace through the loop above:</p>
+<ol>
+<li><strong>Reason:</strong> "I don't know why this test fails yet; I should run it first and see the actual failure, rather than guess from the test's name."</li>
+<li><strong>Act:</strong> calls <code>Bash</code> to run the specific test with verbose output.</li>
+<li><strong>Observe:</strong> the test output shows an assertion failure on a timeout value, with a stack trace pointing into a specific source file.</li>
+<li><strong>Reason:</strong> "The failure is in the connection-handling code; I should read that function before assuming anything about what it does."</li>
+<li><strong>Act:</strong> calls <code>Read</code> on that file, then searches the codebase (for example with <code>grep</code> through <code>Bash</code>) for other callers of the function to understand blast radius.</li>
+<li><strong>Observe:</strong> the function's actual timeout default doesn't match what the test expects, and the file's recent git history (another <code>Bash</code> call) shows the default was changed last week.</li>
+<li><strong>Reason:</strong> "This looks like the test wasn't updated when the default changed. I should propose a fix rather than guess which side is 'correct'; that's a product decision."</li>
+<li><strong>Final response:</strong> a summary of the root cause, a proposed one-line fix (or a proposed test update), and an explicit note that a human should confirm which value is actually intended before it's applied.</li>
+</ol>
+<ul>
+<li>Nothing here required knowing your codebase in advance: every fact (the failure, the function, the git history) was pulled in live through a tool call.</li>
+<li>Watch for this pattern across every hands-on exercise: good output correlates with "did it look at the right things," not "was the prompt clever."</li>
+</ul>
+<nav class="pager" aria-label="Page navigation"><a class="prev" href="#p3"><span class="dir">← Previous</span>3. How a model gets built, and why that matters to you</a><a class="next primary" href="#p5"><span class="dir">Next →</span>5. Prompt engineering: getting the output you actually want</a></nav>
+<footer>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview · Foundations primer</footer>
+</div>
+</section>
+<section class="page" id="p5" data-title="5. Prompt engineering: getting the output you actually want">
+<div class="wrap">
+<h1 class="part-title"><span class="num">5</span>Prompt engineering: getting the output you actually want</h1>
+<ul>
+<li>The earlier sections gave you the mechanism: the model continues <em>whatever is in its context window</em>, its weights are frozen, and an agent can add real evidence to that context by using tools.</li>
+<li>So the prompt is the one lever you control on every request: it decides what the model has to work with.</li>
+<li><strong>Prompt engineering</strong> is just that: deliberately shaping the input so the most plausible continuation is also the one you need.</li>
+<li>Below, the techniques are in the order you'd apply them to a real task. Each one comes back in the hands-on exercises.</li>
+</ul>
+
+<figure>
+  <svg viewBox="0 0 800 330" role="img" aria-label="Anatomy of a strong coding prompt in five layers: the goal and scope, the context and constraints with the reason for them, the evidence such as exact errors and files, examples of the desired format, and a definition of done the model can check by running something.">
+    <g font-family="inherit">
+      <rect x="20" y="14" width="210" height="46" rx="10" class="box-fill"/>
+      <text x="125" y="42" text-anchor="middle" class="label-title">1. Goal &amp; scope</text>
+      <text x="250" y="42" class="label-sm">What to change, in which file or area, and what is out of scope</text>
+
+      <rect x="20" y="76" width="210" height="46" rx="10" class="box-fill"/>
+      <text x="125" y="104" text-anchor="middle" class="label-title">2. Context &amp; constraints</text>
+      <text x="250" y="104" class="label-sm">Conventions to follow, and <tspan font-weight="700">why</tspan> they matter</text>
+
+      <rect x="20" y="138" width="210" height="46" rx="10" class="box-accent3"/>
+      <text x="125" y="166" text-anchor="middle" class="label-title">3. Evidence</text>
+      <text x="250" y="166" class="label-sm">The exact error, log, or file: not your paraphrase of it</text>
+
+      <rect x="20" y="200" width="210" height="46" rx="10" class="box-fill"/>
+      <text x="125" y="228" text-anchor="middle" class="label-title">4. Examples</text>
+      <text x="250" y="228" class="label-sm">A few samples of the output shape, when format is easier to show than describe</text>
+
+      <rect x="20" y="262" width="210" height="46" rx="10" class="box-accent"/>
+      <text x="125" y="290" text-anchor="middle" class="label-title">5. Definition of done</text>
+      <text x="250" y="290" class="label-sm">A check it can run: a test, a build, an expected output</text>
+    </g>
+  </svg>
+  <figcaption>Figure 8. Five layers of a strong coding prompt. Not every prompt needs all five: a one-line rename needs only the first. The layers matter most when the task is ambiguous or the cost of a wrong answer is high.</figcaption>
+</figure>
+
+<h3>1. Write for a smart colleague who has no context</h3>
+<ul>
+<li>Anthropic's own test: show your prompt to a colleague with minimal context on the task. If they'd be confused, the model will be too.</li>
+<li>The model can infer intent, but it can't read your mind or your team's unwritten conventions.</li>
+<li>Everything it doesn't see in the context window, it has to guess.</li>
+</ul>
+
+<h3>2. Be specific: scope, symptom, location, outcome</h3>
+<p>The single highest-value habit. Compare vague and specific versions of the same request:</p>
+<div class="tablewrap"><table>
+<tr><th>Vague</th><th>Specific</th><th>What got added</th></tr>
+<tr><td><em>"fix the login bug"</em></td><td><em>"Users report login fails after session timeout. Check the auth flow in <code>src/auth/</code>, especially token refresh. Write a failing test that reproduces it, then fix it."</em></td><td>Symptom, likely location, what "fixed" looks like</td></tr>
+<tr><td><em>"add tests for foo.py"</em></td><td><em>"Write a test for <code>foo.py</code> covering the case where the user is logged out. Avoid mocks."</em></td><td>Scope and a testing preference</td></tr>
+<tr><td><em>"the parser crashes"</em></td><td><em>"<code>parse_header()</code> in <code>src/net/parse.c</code> crashes on a zero-length packet. Reproduce it with a failing test, then fix the root cause."</em></td><td>Exact function, exact trigger, an order of work</td></tr>
+</table></div>
+<ul>
+<li>Vague prompts aren't always wrong: when you're exploring ("what would you improve in this file?") a loose prompt can surface things you wouldn't have asked about.</li>
+<li>Use vague to explore, specific to change code.</li>
+</ul>
+
+<h3>3. Give context and the reason behind a constraint</h3>
+<ul>
+<li>A bare rule gets followed literally. A rule with its reason gets <em>generalised</em> sensibly.</li>
+<li>Weaker: "Don't use dynamic allocation."</li>
+<li>Stronger: "This runs on a target with 64 KB of RAM, so avoid dynamic allocation; use the static pools in <code>pool.h</code>."</li>
+<li>Point at existing patterns too: "follow how <code>uart_driver.c</code> is structured" beats describing the style in words.</li>
+</ul>
+
+<h3>4. Show, don't only tell: examples (few-shot prompting)</h3>
+<ul>
+<li>When the output has a particular shape (commit-message format, log-line style, test layout), a few examples communicate it faster and more exactly than a paragraph of description.</li>
+<li>This is <strong>few-shot</strong> (or multishot) prompting. Zero examples is <strong>zero-shot</strong>.</li>
+<li>Good examples are <strong>relevant</strong> (mirror your real use), <strong>varied</strong> (cover edge cases so it doesn't latch onto an accidental pattern), and about <strong>three to five</strong> in number.</li>
+<li>Label them clearly as examples so the model doesn't mistake them for the task input.</li>
+</ul>
+
+<h3>5. Structure the prompt so the parts can't be confused</h3>
+<ul>
+<li>When a prompt mixes instructions, background, and pasted material, separate them. XML-style tags (<code>&lt;instructions&gt;</code>, <code>&lt;context&gt;</code>, <code>&lt;example&gt;</code>) are the technique Anthropic recommends; keep tag names consistent.</li>
+<li><strong>Order matters for long inputs:</strong> put the long material (a big log, several files) first and your question or instruction last. Anthropic reports this can improve response quality noticeably on complex, multi-document inputs.</li>
+<li>For a long document, asking the model to quote the relevant parts first keeps its answer anchored to the text.</li>
+<li>A one-line role ("You are a code reviewer focused on memory safety") can focus tone and priorities. It matters mostly when you write system prompts; Claude Code already sets its own.</li>
+<li>State what you <em>want</em>, not just what you don't: "write in plain prose paragraphs" works better than "don't use bullet points".</li>
+</ul>
+
+<h3>6. Break big tasks into steps</h3>
+<ul>
+<li>One prompt that asks for ten things tends to do some of them well and others sloppily.</li>
+<li>Use a numbered list when order matters, or run it as separate prompts, each building on the last result.</li>
+<li>For code, the pattern that works: <strong>explore → plan → implement → commit</strong>. Read first, agree the approach, then change files.</li>
+<li>Skip the ceremony for tiny tasks: if you could describe the diff in one sentence, just ask for it.</li>
+</ul>
+
+<h3>7. Supply real evidence, not a description of it</h3>
+<ul>
+<li>"The build is failing" gives the model nothing to reason from. The actual error message gives it a stack trace, a file, a line.</li>
+<li>Paste the failing output, point at the file (<code>@path/to/file</code> in Claude Code), give a URL for documentation, or pipe data in: <code>cat error.log | claude -p "explain this error"</code>.</li>
+<li>This is the agent-loop lesson applied to prompting: output improves when the model has <em>read the real thing</em>, not recalled something plausible.</li>
+</ul>
+
+<h3>8. Define "done" with a check the model can run</h3>
+<ul>
+<li>Without a check, "looks done" is the only signal the model has, so <em>you</em> become the verification loop and every mistake waits for you to notice it.</li>
+<li>Give it something that returns pass or fail: a test suite, a build exit code, a linter, a diff against expected output.</li>
+<li>Then it can run the check, read the result, and iterate until it passes, using the agent loop.</li>
+<li>Ask it to <strong>show evidence</strong> (the test output, the command it ran), not just to say it worked.</li>
+<li>Prefer root causes: "fix it and verify the build succeeds; address the root cause, don't suppress the error."</li>
+</ul>
+
+<h3>9. Iterate: treat the first prompt as a draft</h3>
+<ul>
+<li>Correct early when you see it drifting. A quick redirect costs less than a long wrong path.</li>
+<li>If you've corrected the same issue twice and it's still off, the context now holds failed attempts. Start a fresh session with a better prompt that bakes in what you learned: that usually beats a long session of patching.</li>
+<li>Emphasis (capitals, "CRITICAL", "MUST") is a last resort. Recent models follow instructions closely, so shouting often over-triggers behaviour. Use it on the one line that keeps getting skipped, not on everything.</li>
+</ul>
+
+<div class="callout">
+  <strong>Prompting vs. context</strong>
+  Clever wording can't replace missing information. An exact error message, the right file, and a test to run will beat a beautifully phrased prompt that gives the model nothing to look at. Claude Code adds its own help here: it reads files itself, <code>CLAUDE.md</code> carries standing conventions for every session, and Plan Mode lets you check its understanding before it edits (all introduced later in this document).
+</div>
+<nav class="pager" aria-label="Page navigation"><a class="prev" href="#p4"><span class="dir">← Previous</span>4. From language model to agent</a><a class="next primary" href="#p6"><span class="dir">Next →</span>6. The Claude model family &amp; choosing a model</a></nav>
+<footer>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview · Foundations primer</footer>
+</div>
+</section>
+<section class="page" id="p6" data-title="6. The Claude model family & choosing a model">
+<div class="wrap">
+<h1 class="part-title"><span class="num">6</span>The Claude model family &amp; choosing a model</h1>
+<p>Hands-on practice covers this fully; this section is just enough to make it land faster.</p>
+
+<ul>
+<li>Claude is a <strong>family</strong> of models, not one fixed model. In Claude Code you pick one by alias: <code>haiku</code>, <code>sonnet</code>, <code>opus</code>, or <code>fable</code>. Each alias points at the latest version of that tier, so specific version numbers change over time.</li>
+<li>The trade-off is <strong>speed and cost</strong> versus <strong>depth of reasoning</strong>.</li>
+<li><strong>Haiku:</strong> fastest and lowest cost, for simple, well-scoped work: a lint fix, a mechanical rename, summarising a log.</li>
+<li><strong>Sonnet:</strong> balanced, the workhorse for most day-to-day coding.</li>
+<li><strong>Opus:</strong> stronger reasoning for complex problems: root-cause analysis, architecture decisions, subtle security questions.</li>
+<li><strong>Fable:</strong> the most capable tier, aimed at the hardest and longest tasks: long autonomous sessions larger than a single sitting. It isn't the default on any plan and can be billed differently, so check your plan before relying on it.</li>
+<li>Separately, an <strong>effort</strong> setting (<code>/effort</code>) dials how much the model deliberates before answering, independent of which model you picked. Levels run <code>low</code>, <code>medium</code>, <code>high</code>, <code>xhigh</code>, <code>max</code>, and the default varies by model.</li>
+</ul>
+
+<figure>
+  <svg viewBox="0 0 880 160" role="img" aria-label="Model tier spectrum from fastest and cheapest to most capable: Haiku for simple tasks, Sonnet for daily coding, Opus for complex reasoning, Fable for the hardest and longest tasks.">
+    <g font-family="inherit">
+      <line x1="40" y1="60" x2="840" y2="60" class="arrow-line" stroke-width="2"/>
+      <polygon points="840,60 830,54 830,66" class="arrow-head"/>
+      <text x="40" y="30" class="label-sm" text-anchor="start" font-weight="700">Faster, cheaper</text>
+      <text x="840" y="30" class="label-sm" text-anchor="end" font-weight="700">More capable</text>
+
+      <circle cx="120" cy="60" r="7" class="box-accent2"/>
+      <text x="120" y="92" text-anchor="middle" class="label-title">Haiku</text>
+      <text x="120" y="110" text-anchor="middle" class="label-sm">simple, well-scoped</text>
+
+      <circle cx="320" cy="60" r="7" class="box-fill"/>
+      <text x="320" y="92" text-anchor="middle" class="label-title">Sonnet</text>
+      <text x="320" y="110" text-anchor="middle" class="label-sm">daily coding</text>
+
+      <circle cx="540" cy="60" r="7" class="box-fill"/>
+      <text x="540" y="92" text-anchor="middle" class="label-title">Opus</text>
+      <text x="540" y="110" text-anchor="middle" class="label-sm">complex reasoning</text>
+
+      <circle cx="760" cy="60" r="7" class="box-accent"/>
+      <text x="760" y="92" text-anchor="middle" class="label-title">Fable</text>
+      <text x="760" y="110" text-anchor="middle" class="label-sm">hardest, longest tasks</text>
+    </g>
+  </svg>
+  <figcaption>Figure 9. Match the tier to the task. <code>/effort</code> dials deliberation depth within whichever tier you picked.</figcaption>
+</figure>
+
+<p>Matching model and effort to task, a starting intuition, refined with real numbers once you're running tasks hands-on:</p>
+
+<div class="tablewrap"><table>
+<tr><th>Task</th><th>Likely fit</th><th>Why</th></tr>
+<tr><td>Fix a lint warning, rename a variable consistently</td><td>Haiku or Sonnet, <code>low</code> effort</td><td>Narrow, well-specified, low ambiguity: speed matters more than deep reasoning</td></tr>
+<tr><td>Implement a small, well-scoped enhancement from a clear spec</td><td>Sonnet, <code>medium</code> effort</td><td>Needs to follow multi-step instructions correctly but isn't conceptually hard</td></tr>
+<tr><td>Diagnose a failing build log with an unclear root cause</td><td>Sonnet or Opus, <code>high</code> effort</td><td>Needs to weigh several plausible causes against evidence it gathers; verification matters</td></tr>
+<tr><td>Cross-file root-cause analysis in an unfamiliar legacy module</td><td>Opus, <code>high</code> or <code>xhigh</code> effort</td><td>High ambiguity, many interacting pieces, cost of a wrong answer is high</td></tr>
+<tr><td>Security vulnerability assessment and patch evaluation</td><td>Opus, up to <code>max</code> effort</td><td>Subtle trade-offs, real consequences for getting it wrong. <code>max</code> can overthink, so reserve it for the hard cases</td></tr>
+<tr><td>A long, multi-step migration run largely unattended</td><td>Fable</td><td>Built for sustained autonomous work larger than a single sitting</td></tr>
+</table></div>
+
+<ul>
+<li><code>/effort</code> works <em>alongside</em> model choice, not instead of it.</li>
+<li>Higher effort = more deliberation before answering. Useful for a hard problem. Wasteful for a one-line fix.</li>
+<li>A useful hands-on exercise: run the same task at two model/effort combinations, compare time, cost, quality, side by side.</li>
+</ul>
+
+<div class="callout note">
+  <strong>Worth previewing: prompt caching</strong>
+  Large, unchanging context (a big file already shown, a long system prompt) can be cached: re-sending it next turn is far cheaper and faster. Keeping a session focused, rather than jumping between unrelated files, is both a quality <em>and</em> a cost strategy. Hands-on practice has you inspect this via <code>/usage</code>.
+</div>
+<nav class="pager" aria-label="Page navigation"><a class="prev" href="#p5"><span class="dir">← Previous</span>5. Prompt engineering: getting the output you actually want</a><a class="next primary" href="#p7"><span class="dir">Next →</span>7. Claude Code at a glance</a></nav>
+<footer>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview · Foundations primer</footer>
+</div>
+</section>
+<section class="page" id="p7" data-title="7. Claude Code at a glance">
+<div class="wrap">
+<h1 class="part-title"><span class="num">7</span>Claude Code at a glance</h1>
+<ul>
+<li>Everything above applies to any LLM-based agent. This section is the short, Claude Code-specific orientation.</li>
+<li>Claude Code = the model + the agent loop + a small built-in toolset + a permission layer + extension points.</li>
+<li>Each piece is taught hands-on in the training, with exercises. Here you only need the name and the one-line idea.</li>
+</ul>
+
+<figure>
+  <svg viewBox="0 0 900 392" role="img" aria-label="Claude Code architecture: the user's terminal talks to the agent loop, which talks to the Claude model, and which acts through a permission layer onto built-in tools, project memory, and MCP servers connected to external systems.">
+    <g font-family="inherit">
+      <rect x="20" y="20" width="150" height="54" rx="10" class="box-fill"/>
+      <text x="95" y="42" text-anchor="middle" class="label-title">You</text>
+      <text x="95" y="60" text-anchor="middle" class="label-sm">terminal / IDE</text>
+
+      <line x1="170" y1="47" x2="214" y2="47" class="arrow-line"/>
+      <polygon points="214,47 206,42 206,52" class="arrow-head"/>
+
+      <rect x="216" y="10" width="230" height="74" rx="10" class="box-accent"/>
+      <text x="331" y="36" text-anchor="middle" class="label-title">Claude Code: agent loop</text>
+      <text x="331" y="54" text-anchor="middle" class="label-sm">reason → act → observe</text>
+      <text x="331" y="70" text-anchor="middle" class="label-sm">CLAUDE.md loaded as persistent context</text>
+
+      <line x1="446" y1="47" x2="490" y2="47" class="arrow-line"/>
+      <polygon points="490,47 482,42 482,52" class="arrow-head"/>
+      <rect x="492" y="10" width="160" height="74" rx="10" class="box-accent3"/>
+      <text x="572" y="40" text-anchor="middle" class="label-title">Claude</text>
+      <text x="572" y="58" text-anchor="middle" class="label-sm">the model</text>
+
+      <line x1="331" y1="84" x2="331" y2="130" class="arrow-line"/>
+      <polygon points="331,130 326,122 336,122" class="arrow-head"/>
+      <text x="400" y="110" text-anchor="middle" class="label-sm">every tool call passes through</text>
+
+      <rect x="160" y="134" width="340" height="52" rx="10" class="box-fill"/>
+      <text x="330" y="156" text-anchor="middle" class="label-title">Permission layer</text>
+      <text x="330" y="174" text-anchor="middle" class="label-sm">five permission modes</text>
+
+      <line x1="250" y1="186" x2="130" y2="226" class="arrow-line"/>
+      <polygon points="130,226 139,223 134,232" class="arrow-head"/>
+      <line x1="330" y1="186" x2="330" y2="226" class="arrow-line"/>
+      <polygon points="330,226 325,218 335,218" class="arrow-head"/>
+      <line x1="410" y1="186" x2="520" y2="226" class="arrow-line"/>
+      <polygon points="520,226 511,224 515,233" class="arrow-head"/>
+
+      <rect x="20" y="230" width="220" height="60" rx="10" class="box-fill"/>
+      <text x="130" y="253" text-anchor="middle" class="label-title">Built-in tools</text>
+      <text x="130" y="271" text-anchor="middle" class="label-sm">Read · Write · Edit · Bash · Web · Subagents</text>
+
+      <rect x="260" y="230" width="140" height="60" rx="10" class="box-fill"/>
+      <text x="330" y="253" text-anchor="middle" class="label-title">Subagents</text>
+      <text x="330" y="271" text-anchor="middle" class="label-sm">isolated workers</text>
+
+      <rect x="420" y="230" width="200" height="60" rx="10" class="box-fill"/>
+      <text x="520" y="253" text-anchor="middle" class="label-title">MCP client</text>
+      <text x="520" y="271" text-anchor="middle" class="label-sm">talks to MCP servers</text>
+
+      <line x1="130" y1="290" x2="130" y2="320" class="arrow-line"/>
+      <polygon points="130,320 125,312 135,312" class="arrow-head"/>
+      <rect x="20" y="324" width="220" height="48" rx="10" class="box-accent2"/>
+      <text x="130" y="344" text-anchor="middle" class="label-title">Your repository</text>
+      <text x="130" y="360" text-anchor="middle" class="label-sm">files, shell, build system</text>
+
+      <line x1="520" y1="290" x2="520" y2="320" class="arrow-line"/>
+      <polygon points="520,320 515,312 525,312" class="arrow-head"/>
+      <rect x="420" y="324" width="200" height="48" rx="10" class="box-accent2"/>
+      <text x="520" y="344" text-anchor="middle" class="label-title">External systems</text>
+      <text x="520" y="360" text-anchor="middle" class="label-sm">CI, build logs, vuln DBs</text>
+
+      <rect x="660" y="134" width="220" height="146" rx="10" class="box-fill"/>
+      <text x="770" y="158" text-anchor="middle" class="label-title">Also configurable:</text>
+      <text x="770" y="182" text-anchor="middle" class="label-sm">Hooks: lifecycle automation</text>
+      <text x="770" y="202" text-anchor="middle" class="label-sm">Skills: reusable know-how</text>
+      <text x="770" y="222" text-anchor="middle" class="label-sm">Plugins: package &amp; share</text>
+      <text x="770" y="242" text-anchor="middle" class="label-sm">Headless mode: claude -p</text>
+      <text x="770" y="262" text-anchor="middle" class="label-sm">for CI-triggered runs</text>
+    </g>
+  </svg>
+  <figcaption>Figure 10. The full picture. Everything the model decides to do flows back down through the permission layer before it touches your repository or the outside world: that single chokepoint is the main safety mechanism covered below.</figcaption>
+</figure>
+
+<div class="tablewrap"><table>
+<tr><th>Piece</th><th>The one-line idea</th></tr>
+<tr><td><strong>Built-in tools</strong></td><td>The core set is small: <code>Read</code> looks at code; <code>Write</code> and <code>Edit</code> change it; <code>Bash</code> does everything else (build, test, git, and on Linux and macOS searching with <code>grep</code> and <code>find</code>; dedicated <code>Grep</code>/<code>Glob</code> tools are the default only on Windows). Web search/fetch and a few orchestration tools (such as spawning subagents) sit alongside. A short, auditable list is what makes the permission layer tractable.</td></tr>
+<tr><td><strong>Permission modes</strong></td><td>An adjustable boundary between "propose" and "execute". Every tool call passes through it (see the diagram below).</td></tr>
+<tr><td><strong><code>CLAUDE.md</code></strong></td><td>A Markdown file read at the start of every session: build commands, conventions, notes you'd otherwise re-explain. It's context the model reads, not enforcement. Claude Code can also save its own learnings across sessions (auto memory).</td></tr>
+<tr><td><strong>Context management</strong></td><td><code>/compact</code> summarises, <code>/clear</code> resets for an unrelated task, <code>/usage</code> and the status line show the budget, <code>/rewind</code> restores an earlier checkpoint. Built on the context window idea from earlier.</td></tr>
+<tr><td><strong>MCP</strong></td><td>Built-in tools reach only your filesystem and shell. MCP servers connect Claude Code to external systems (CI logs, vulnerability databases, internal APIs); the project config is <code>.mcp.json</code>.</td></tr>
+<tr><td><strong>Subagents</strong></td><td>Specialist workers with their own context window, defined in <code>.claude/agents</code>. Heavy work stays out of your main session; only a summary comes back.</td></tr>
+<tr><td><strong>Hooks</strong></td><td>Scripts that run automatically at lifecycle points (e.g. before a tool call). Deterministic: a pre-tool hook can block a call outright. Use them for rules that must never depend on the model remembering.</td></tr>
+<tr><td><strong>Skills &amp; plugins</strong></td><td>A skill packages reusable know-how that Claude draws on when relevant. A plugin bundles skills, subagents, hooks, and MCP config so a workflow installs in one step.</td></tr>
+<tr><td><strong>Headless mode &amp; Agent SDK</strong></td><td><code>claude -p</code> runs Claude Code non-interactively (CI, scripts). The Claude Agent SDK (Python and TypeScript) exposes the same agent loop as a library for standalone agent applications.</td></tr>
+</table></div>
+
+<h3>Permission modes: the human-in-the-loop dial</h3>
+<p>Tool calls have real side effects: an <code>Edit</code> changes a file, a <code>Bash</code> call can run anything. Claude Code makes the boundary between "propose" and "execute" explicit and adjustable:</p>
+
+<figure>
+  <svg viewBox="0 0 900 190" role="img" aria-label="Five Claude Code permission modes from asks-every-time to never-asks: Manual, acceptEdits, Plan Mode, auto, and bypassPermissions.">
+    <g font-family="inherit">
+      <line x1="40" y1="70" x2="860" y2="70" class="arrow-line" stroke-width="2"/>
+      <polygon points="860,70 850,64 850,76" class="arrow-head"/>
+      <text x="40" y="40" class="label-sm" text-anchor="start" font-weight="700">Asks you more</text>
+      <text x="860" y="40" class="label-sm" text-anchor="end" font-weight="700">Asks you less</text>
+
+      <circle cx="100" cy="70" r="7" class="box-fill"/>
+      <text x="100" y="100" text-anchor="middle" class="label-title">Manual</text>
+      <text x="100" y="118" text-anchor="middle" class="label-sm">asks before edits</text>
+      <text x="100" y="132" text-anchor="middle" class="label-sm">and commands</text>
+
+      <circle cx="280" cy="70" r="7" class="box-fill"/>
+      <text x="280" y="100" text-anchor="middle" class="label-title">acceptEdits</text>
+      <text x="280" y="118" text-anchor="middle" class="label-sm">file edits apply</text>
+      <text x="280" y="132" text-anchor="middle" class="label-sm">without asking</text>
+
+      <circle cx="460" cy="70" r="7" class="box-accent2"/>
+      <text x="460" y="100" text-anchor="middle" class="label-title">Plan Mode</text>
+      <text x="460" y="118" text-anchor="middle" class="label-sm">researches, proposes</text>
+      <text x="460" y="132" text-anchor="middle" class="label-sm">no edits until you approve</text>
+
+      <circle cx="650" cy="70" r="7" class="box-fill"/>
+      <text x="650" y="100" text-anchor="middle" class="label-title">auto</text>
+      <text x="650" y="118" text-anchor="middle" class="label-sm">a classifier reviews</text>
+      <text x="650" y="132" text-anchor="middle" class="label-sm">actions instead of you</text>
+
+      <circle cx="820" cy="70" r="7" class="box-accent"/>
+      <text x="820" y="100" text-anchor="middle" class="label-title">bypassPermissions</text>
+      <text x="820" y="118" text-anchor="middle" class="label-sm">no checks at all</text>
+      <text x="820" y="132" text-anchor="middle" class="label-sm">containers / VMs only</text>
+    </g>
+  </svg>
+  <figcaption>Figure 11. Five settings for how much Claude Code does before checking with you; <code>Shift+Tab</code> cycles through them. Plan Mode is a slightly different kind of setting: it controls <em>when</em> edits may begin (after you approve a plan) rather than how often you're asked. (A <code>dontAsk</code> mode also exists for unattended runs; it denies anything not pre-approved.)</figcaption>
+</figure>
+
+<div class="callout note">
+  <strong>Plan Mode: the one to know first</strong>
+  Claude researches and proposes a plan without editing anything, and changes only begin after you approve it. For unfamiliar code or multi-file changes, that turns "the agent changed something unexpected" into something that can't happen during the planning phase. In current versions, new interactive terminal and VS Code sessions start in auto mode; Manual is a <code>Shift+Tab</code> away. Early hands-on practice has you switch between these modes and watch the approval flow change.
+</div>
+<nav class="pager" aria-label="Page navigation"><a class="prev" href="#p6"><span class="dir">← Previous</span>6. The Claude model family &amp; choosing a model</a><a class="next primary" href="#p8"><span class="dir">Next →</span>8. Common questions &amp; misconceptions</a></nav>
+<footer>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview · Foundations primer</footer>
+</div>
+</section>
+<section class="page" id="p8" data-title="8. Common questions & misconceptions">
+<div class="wrap">
+<h1 class="part-title"><span class="num">8</span>Common questions &amp; misconceptions</h1>
+<p>Click to expand. Quick answers here mean hands-on time can go to the actual content instead.</p>
+
+<details>
+  <summary class="quiz-q">"Isn't this just autocomplete with extra steps?"</summary>
+  <ul class="answer">
+    <li>Autocomplete: next few tokens, current file only.</li>
+    <li>Claude Code: runs the agent loop, reads other files, runs your build, greps callers, checks git history, revises its plan.</li>
+    <li>Related mechanism, different category of tool.</li>
+  </ul>
+</details>
+<details>
+  <summary class="quiz-q">"Is it safe to let something run Bash commands against my repository?"</summary>
+  <ul class="answer">
+    <li>That's what the permission layer is for: every <code>Bash</code> call passes through it.</li>
+    <li>You control how much runs without approval.</li>
+    <li>Plan Mode: nothing executes until you've reviewed a plan.</li>
+    <li>Early hands-on practice: watch this boundary operate before trusting it with real changes.</li>
+  </ul>
+</details>
+<details>
+  <summary class="quiz-q">"Does it actually understand my code, or is it pattern-matching?"</summary>
+  <ul class="answer">
+    <li>What's verifiable is behavioural, not philosophical.</li>
+    <li>Given your files, it traces call graphs, spots inconsistencies, proposes changes consistent with conventions.</li>
+    <li>That needs tracking relationships, not just matching isolated lines.</li>
+    <li>Whether that's "understanding" is a separate question from whether it's useful. This training is about the latter.</li>
+  </ul>
+</details>
+<details>
+  <summary class="quiz-q">"Will this replace the need for senior engineering judgment?"</summary>
+  <ul class="answer">
+    <li>The training's own structure argues no: security and patch exercises have an explicit human-approval checkpoint before any patch is applied.</li>
+    <li>Diff-review exercises have you review and request changes, not accept them wholesale.</li>
+    <li>Judgment about what's correct and what's safe stays with the engineer. The tool speeds up the mechanical part.</li>
+  </ul>
+</details>
+<details>
+  <summary class="quiz-q">"Can it get stuck or go off and do something unbounded?"</summary>
+  <ul class="answer">
+    <li>The loop ends when the model decides the goal is met.</li>
+    <li>In practice, sessions can take a wrong turn or run long.</li>
+    <li>That's exactly why permission modes, hooks, and your ability to interrupt exist: real controls, not theoretical ones.</li>
+    <li>A checkpoint/rewind exercise practices recovering from this.</li>
+  </ul>
+</details>
+<details>
+  <summary class="quiz-q">"If I run this against a legacy codebase with no docs, is it starting from zero like I would?"</summary>
+  <ul class="answer">
+    <li>No, a real advantage over a new hire in the same spot.</li>
+    <li>It can grep the whole codebase, trace every caller, cross-reference git history, in seconds.</li>
+    <li>It lacks your tacit sense of which parts are trustworthy vs. fragile. That's what CLAUDE.md and skills are for: hand it that knowledge explicitly.</li>
+  </ul>
+</details>
+<details>
+  <summary class="quiz-q">"Does my proprietary code get used to train future models?"</summary>
+  <ul class="answer">
+    <li>Governed by your organisation's commercial agreement and admin configuration, not by anything fixed in the architecture here.</li>
+    <li>Ask whoever administers your account.</li>
+    <li>Note: hands-on exercises typically use trainer-provided open-source code, never client proprietary code, so the training itself doesn't depend on the answer.</li>
+  </ul>
+</details>
+<nav class="pager" aria-label="Page navigation"><a class="prev" href="#p7"><span class="dir">← Previous</span>7. Claude Code at a glance</a><a class="next primary" href="#p9"><span class="dir">Next →</span>9. Quick reference: commands &amp; modes</a></nav>
+<footer>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview · Foundations primer</footer>
+</div>
+</section>
+<section class="page" id="p9" data-title="9. Quick reference: commands & modes">
+<div class="wrap">
+<h1 class="part-title"><span class="num">9</span>Quick reference: commands &amp; modes</h1>
+<p>You'll meet each of these properly in hands-on practice. Look them up here if a name goes by faster than you can place it.</p>
+<div class="tablewrap"><table>
+<tr><th>Command / mode</th><th>What it does</th></tr>
+<tr><td><code>/compact</code></td><td>Summarises older conversation into a denser form to free up context-window budget</td></tr>
+<tr><td><code>/clear</code></td><td>Clears the current context entirely: use when switching to an unrelated task</td></tr>
+<tr><td><code>/usage</code></td><td>Shows current token usage against the context window and cost</td></tr>
+<tr><td><code>/model</code></td><td>Switches which model tier is handling the session</td></tr>
+<tr><td><code>/effort</code></td><td>Adjusts how much internal deliberation the model does before answering</td></tr>
+<tr><td><code>/rewind</code></td><td>Restores code, conversation, or both to an earlier automatic checkpoint (git is still needed for changes made through Bash)</td></tr>
+<tr><td><code>Shift+Tab</code></td><td>Cycles through the permission modes during a session</td></tr>
+<tr><td>Plan Mode</td><td>Researches and proposes a plan without editing; changes only start after you approve the plan</td></tr>
+<tr><td><code>@path/to/file</code></td><td>References a file directly in a prompt so Claude reads it before answering</td></tr>
+<tr><td><code>claude -p</code> (headless mode)</td><td>Runs Claude Code non-interactively, suitable for CI/pipeline triggers</td></tr>
+<tr><td><code>.mcp.json</code></td><td>Project configuration file registering which MCP servers Claude Code connects to</td></tr>
+<tr><td><code>CLAUDE.md</code></td><td>Project-root memory file loaded automatically each session</td></tr>
+<tr><td><code>.claude/agents</code></td><td>Where subagent definitions live in a project</td></tr>
+</table></div>
+<nav class="pager" aria-label="Page navigation"><a class="prev" href="#p8"><span class="dir">← Previous</span>8. Common questions &amp; misconceptions</a><a class="next primary" href="#p10"><span class="dir">Next →</span>10. Glossary</a></nav>
+<footer>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview · Foundations primer</footer>
+</div>
+</section>
+<section class="page" id="p10" data-title="10. Glossary">
+<div class="wrap">
+<h1 class="part-title"><span class="num">10</span>Glossary</h1>
+<div class="tablewrap"><table>
+<tr><th>Term</th><th>What it means here</th></tr>
+<tr><td><strong>Token</strong></td><td>The unit text is broken into for the model; roughly 4 characters / ~¾ of a word on average for English prose, often shorter per character for dense code and identifiers.</td></tr>
+<tr><td><strong>Embedding</strong></td><td>The list of numbers a token is converted into internally, a point in a high-dimensional space where related concepts end up near each other.</td></tr>
+<tr><td><strong>Context window</strong></td><td>The fixed-size token budget holding everything the model can see for its next prediction: conversation, file contents, tool output. Once full, something must be summarised or dropped to make room.</td></tr>
+<tr><td><strong>Inference</strong></td><td>Running the already-trained model to produce output (as opposed to training it); this is what happens every time you send Claude Code a request.</td></tr>
+<tr><td><strong>Autoregressive generation</strong></td><td>Producing output one token at a time, each new token conditioned on everything generated so far: why output streams in progressively rather than appearing all at once.</td></tr>
+<tr><td><strong>Temperature / sampling</strong></td><td>The controlled randomness in choosing the next token; higher temperature = more varied, less predictable output. Part of why identical prompts can yield differently-worded answers.</td></tr>
+<tr><td><strong>Pretraining</strong></td><td>The first, largest training stage: next-token prediction over a massive general text/code corpus, the source of most of the model's raw capability.</td></tr>
+<tr><td><strong>Fine-tuning</strong></td><td>A stage of further training, done by the model's maker before release, on curated request → good-response examples. It teaches the model to behave as an assistant rather than a raw autocomplete engine. (Not something you do to use Claude Code.)</td></tr>
+<tr><td><strong>RLHF (alignment)</strong></td><td>Reinforcement learning from human feedback: the final training stage, where people rank candidate answers to the same request and the model is nudged toward the preferred ones, shaping tone, caution, and judgment.</td></tr>
+<tr><td><strong>Knowledge cutoff</strong></td><td>The date pretraining data collection stopped; the model has no inherent knowledge of anything after it unless that information is supplied at runtime via a tool.</td></tr>
+<tr><td><strong>Hallucination</strong></td><td>A fluent, confident, but factually wrong output, a side effect of the model always producing its most statistically plausible continuation rather than looking facts up.</td></tr>
+<tr><td><strong>Prompt engineering</strong></td><td>Deliberately shaping what goes into the model's context (instructions, evidence, examples, a way to check the result) so the most plausible continuation is the one you need.</td></tr>
+<tr><td><strong>Few-shot prompting</strong></td><td>Including a few worked examples (typically three to five, relevant and varied) of the desired output in the prompt. With none, it's zero-shot.</td></tr>
+<tr><td><strong>Verification target</strong></td><td>A check the model can run itself (a test, a build exit code, a linter, expected output) so it can iterate until pass/fail says it's done, instead of you being the only check.</td></tr>
+<tr><td><strong>Tool use / function calling</strong></td><td>The model requesting a structured action (e.g. "read this file") that code outside the model (the agent harness) actually executes and reports the result of.</td></tr>
+<tr><td><strong>Agent loop</strong></td><td>Reason → act (tool call) → observe (result) → repeat, until the goal is met and a final response is returned instead of another tool call.</td></tr>
+<tr><td><strong>Agentic AI</strong></td><td>A generative model operating inside an agent loop, with tools and the ability to act across multiple steps, rather than producing a single one-shot reply.</td></tr>
+<tr><td><strong>Permission modes</strong></td><td>Settings for how much Claude Code does before checking with you: Manual (asks before edits and commands), acceptEdits, Plan Mode, auto (a classifier reviews actions instead of you), and bypassPermissions (no checks; isolated containers and VMs only).</td></tr>
+<tr><td><strong>Plan Mode</strong></td><td>A Claude Code permission mode that researches and proposes a plan without editing; nothing changes on disk until you approve the plan.</td></tr>
+<tr><td><strong>CLAUDE.md</strong></td><td>A Markdown file at your repository root holding project-specific memory (conventions, build commands, notes) that Claude Code loads automatically each session.</td></tr>
+<tr><td><strong>MCP (Model Context Protocol)</strong></td><td>The open protocol Claude Code uses to connect to external systems via tools, resources, and prompts exposed by a standalone MCP server.</td></tr>
+<tr><td><strong>MCP Inspector</strong></td><td>A standalone tool for testing an MCP server's tools/resources/prompts directly, before wiring the server into Claude Code itself.</td></tr>
+<tr><td><strong>Subagent</strong></td><td>A separately-configured agent instance with its own isolated context window, delegated a bounded task by an orchestrator session and returning only a summary.</td></tr>
+<tr><td><strong>Hook</strong></td><td>A script Claude Code runs automatically at a defined lifecycle point (e.g. before or after a tool call) to deterministically enforce a rule, independent of model judgment.</td></tr>
+<tr><td><strong>Skill</strong></td><td>Packaged, reusable domain knowledge or process that Claude Code can draw on without it being re-explained each session.</td></tr>
+<tr><td><strong>Plugin</strong></td><td>A bundle of skills, subagents, hooks, and MCP configuration, packaged for one-step distribution across a team.</td></tr>
+<tr><td><strong>Headless mode (<code>claude -p</code>)</strong></td><td>Running Claude Code non-interactively from a script or pipeline, with no human watching the terminal: the mechanism behind CI-triggered, automated triage.</td></tr>
+<tr><td><strong>Claude Agent SDK</strong></td><td>A TypeScript/Python library exposing the same agent-loop machinery as Claude Code's CLI, for building standalone, maintained agent applications beyond a CLI invocation.</td></tr>
+</table></div>
+<nav class="pager" aria-label="Page navigation"><a class="prev" href="#p9"><span class="dir">← Previous</span>9. Quick reference: commands &amp; modes</a><a class="next primary" href="#p11"><span class="dir">Next →</span>11. Self-check</a></nav>
+<footer>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview · Foundations primer</footer>
+</div>
+</section>
+<section class="page" id="p11" data-title="11. Self-check">
+<div class="wrap">
+<h1 class="part-title"><span class="num">11</span>Self-check</h1>
+<p class="lead">Thirteen questions. Try to answer each from memory before expanding it: that's a better signal than re-reading would give you.</p>
+
+<details>
+  <summary class="quiz-q">1. Why does an LLM sometimes give a different answer when you re-run the exact same prompt?</summary>
+  <p class="answer">Sampling, not a fixed path. Temperature adds controlled randomness: two runs can diverge even with identical input.</p>
+</details>
+<details>
+  <summary class="quiz-q">2. What's the practical difference between the context window and a knowledge cutoff?</summary>
+  <p class="answer">Context window = this session's working memory, right now. Knowledge cutoff = a fixed training boundary. Cutoff-era info can still enter context at runtime via tools, files, or MCP.</p>
+</details>
+<details>
+  <summary class="quiz-q">3. Why might a confident, fluent answer about an obscure API still be wrong?</summary>
+  <p class="answer">Always producing the most plausible continuation. Fluency and correctness usually align, but can come apart: hallucination. Why verification habits matter.</p>
+</details>
+<details>
+  <summary class="quiz-q">4. What actually executes a tool call the model requests: the model itself, or something else?</summary>
+  <p class="answer">Something else. The model only requests. The agent harness reads the file, runs the command, feeds the result back.</p>
+</details>
+<details>
+  <summary class="quiz-q">5. In the "failing integration test" worked trace, how did Claude Code learn that the timeout default had recently changed?</summary>
+  <p class="answer">An explicit tool call: <code>git</code> history via <code>Bash</code>. Every fact entered through an observed result, not memory.</p>
+</details>
+<details>
+  <summary class="quiz-q">6. "Fix the login bug" vs. a stronger prompt for the same task: what makes the stronger one better?</summary>
+  <p class="answer">It names the symptom, the likely location, and what "fixed" looks like (for example a failing test that reproduces it first). Specific scope and outcome mean fewer corrections.</p>
+</details>
+<details>
+  <summary class="quiz-q">7. When would you add examples to a prompt rather than write longer instructions?</summary>
+  <p class="answer">When the output has a shape that is easier to show than describe, such as a commit-message or log format. Use roughly three to five relevant, varied examples.</p>
+</details>
+<details>
+  <summary class="quiz-q">8. Why give Claude a test or build command it can run, rather than just asking it to "make it work"?</summary>
+  <p class="answer">Without a check, "looks done" is the only signal, so you become the verification loop. With one, it runs the check, reads the result, and iterates until it passes (using the agent loop).</p>
+</details>
+<details>
+  <summary class="quiz-q">9. Why is Plan Mode considered safer than Manual mode for exploratory work?</summary>
+  <p class="answer">It researches and proposes a plan without editing, and changes only start after you approve. That structurally prevents unapproved edits instead of relying on you catching every prompt.</p>
+</details>
+<details>
+  <summary class="quiz-q">10. Why does a subagent get its own context window instead of sharing the orchestrator's?</summary>
+  <p class="answer">So heavy work (e.g. a full build log) doesn't eat the orchestrator's budget. Only a summary crosses back.</p>
+</details>
+<details>
+  <summary class="quiz-q">11. What problem does MCP solve that the core built-in tools (read, edit, search, shell) don't?</summary>
+  <p class="answer">Built-in tools only reach your local filesystem and shell. MCP reaches external systems: CI logs, vuln databases, internal APIs.</p>
+</details>
+<details>
+  <summary class="quiz-q">12. Where would you encode a rule that must never depend on the model remembering it correctly?</summary>
+  <p class="answer">A hook: a deterministic script at a lifecycle point, not a hope that the model remembers. (<code>CLAUDE.md</code> is context the model reads, not enforcement.)</p>
+</details>
+<details>
+  <summary class="quiz-q">13. Why doesn't "it's agentic" mean "it operates without any human checkpoint"?</summary>
+  <p class="answer">Agentic = plans and acts across steps on its own. It doesn't mean every step skips review by default: see the permission modes and the human-approval checkpoints in the security exercises.</p>
+</details>
+
+<div class="callout note" style="margin-top:30px;">
+  <strong>That's the full foundation</strong>
+  Arrive at your first hands-on session with this vocabulary loaded. Installing Claude Code and watching the agent loop and permission modes in action will confirm what you already understand, not introduce it from zero.
+</div>
+<nav class="pager" aria-label="Page navigation"><a class="prev" href="#p10"><span class="dir">← Previous</span>10. Glossary</a><a class="next" href="#p0"><span class="dir">Finished</span>Back to contents</a></nav>
+<footer>Generative AI, LLM Foundations, Prompt Engineering &amp; Claude Code Overview · Foundations primer</footer>
+</div>
+</section>
+<script>
+(function(){
+  var pages=[].slice.call(document.querySelectorAll('.page'));
+  var where=document.getElementById('where'), prog=document.getElementById('prog');
+  var items=[].slice.call(document.querySelectorAll('#allparts li'));
+  var menu=document.getElementById('allparts');
+  function idx(){var m=/^#p(\d+)$/.exec(location.hash||''); var i=m?+m[1]:0; return (i>=0&&i<pages.length)?i:0;}
+  function render(){
+    var i=idx();
+    pages.forEach(function(p,k){p.hidden=(k!==i);});
+    where.textContent=i===0?'Contents':pages[i].getAttribute('data-title');
+    prog.style.width=(i/(pages.length-1)*100)+'%';
+    items.forEach(function(li){li.classList.toggle('current',+li.getAttribute('data-i')===i);});
+    if(menu)menu.open=false;
+    window.scrollTo(0,0);
+    document.title=(i===0?'':pages[i].getAttribute('data-title')+' · ')+'Pre-Read: GenAI, LLM Foundations, Prompt Engineering & Claude Code';
+  }
+  window.addEventListener('hashchange',render);
+  document.addEventListener('keydown',function(e){
+    if(e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;
+    var tg=(e.target.tagName||'').toLowerCase();
+    if(tg==='input'||tg==='textarea')return;
+    var i=idx();
+    if(e.key==='ArrowRight'&&i<pages.length-1)location.hash='#p'+(i+1);
+    if(e.key==='ArrowLeft'&&i>0)location.hash='#p'+(i-1);
+  });
+  render();
+})();
+</script>
+</body>
+</html>
