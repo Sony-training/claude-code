@@ -97,6 +97,7 @@ cd ~/work/busybox
 git tag | grep -x 1_35_0          # tag name check; if empty, use the tarball fallback below
 git checkout 1_35_0 && git checkout -b lab
 make defconfig
+sed -i 's/^CONFIG_TC=y/# CONFIG_TC is not set/' .config   # tc.c does not build with current kernel headers (TCA_CBQ_* removed)
 
 # GStreamer monorepo (read-only reference and element generator tools)
 git clone --depth 1 --branch 1.24.9 https://gitlab.freedesktop.org/gstreamer/gstreamer.git ~/work/gstreamer
@@ -206,7 +207,7 @@ Rule of thumb: CLAUDE.md says it, hooks and settings enforce it, CI proves it.
 # Project: BusyBox 1.35.0 lab (C, Kconfig, multi-call binary)
 
 ## Commands
-- Configure: make defconfig
+- Configure: make defconfig && sed -i 's/^CONFIG_TC=y/# CONFIG_TC is not set/' .config   (tc.c does not build with current kernel headers)
 - Build native: make -j$(nproc)
 - Build ARM: scripts/build.sh   (CROSS=arm-linux-gnueabihf-, output build-arm/)
 - Test: <verified test command>   (record after running it once)
@@ -709,7 +710,7 @@ Verify: rebuild; rerun the echo test; expected `uryyb`.
 ```text
 Goal: Write scripts/build.sh that builds BusyBox for ARM with the custom toolchain.
 Context: toolchain prefix is $CROSS (see CLAUDE.md).
-Constraints: bash; set -euo pipefail; print `${CROSS}gcc --version` first; run `make O=build-arm defconfig` then `make O=build-arm CROSS_COMPILE=$CROSS -j$(nproc)`; no hard-coded paths.
+Constraints: bash; set -euo pipefail; print `${CROSS}gcc --version` first; run `make O=build-arm defconfig`, then `sed -i 's/^CONFIG_TC=y/# CONFIG_TC is not set/' build-arm/.config` (tc.c does not build with current kernel headers), then `make O=build-arm CROSS_COMPILE=$CROSS -j$(nproc)`; no hard-coded paths.
 Verify: run it; `file build-arm/busybox` reports ELF 32-bit ARM.
 ```
 
